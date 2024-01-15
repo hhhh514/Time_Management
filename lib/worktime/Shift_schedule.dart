@@ -3,6 +3,7 @@ import 'package:path/path.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../schedule/schedule.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 void main() {
   runApp(MyApp());
@@ -27,6 +28,7 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
+  Map<String, int> _monthlyClicks = {};
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   List<DateTime> _selectedDays = [];
@@ -35,6 +37,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
   void initState() {
     super.initState();
     _loadSelectedDays();
+    _loadMonthlyClicks();
   }
 
   _loadSelectedDays() async {
@@ -51,15 +54,34 @@ class _CalendarScreenState extends State<CalendarScreen> {
     await prefs.setStringList('selectedDays', stringDates);
   }
 
+  _saveMonthlyClicks() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('monthlyClicks', json.encode(_monthlyClicks));
+  }
+  _loadMonthlyClicks() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? monthlyClicksString = prefs.getString('monthlyClicks');
+    if (monthlyClicksString != null) {
+      setState(() {
+        _monthlyClicks = Map<String, int>.from(json.decode(monthlyClicksString));
+      });
+    }
+
+  }
+
   void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
     setState(() {
+      String monthKey = "${selectedDay.year}-${selectedDay.month.toString().padLeft(2, '0')}";
       if (_selectedDays.any((day) => isSameDay(day, selectedDay))) {
         _selectedDays.removeWhere((day) => isSameDay(day, selectedDay));
+        _monthlyClicks.update(monthKey, (value) => value - 1, ifAbsent: () => 0);
       } else {
         _selectedDays.add(selectedDay);
+        _monthlyClicks.update(monthKey, (value) => value + 1, ifAbsent: () => 1);
       }
       _focusedDay = focusedDay;
       _saveSelectedDays();
+      _saveMonthlyClicks();
     });
   }
 
@@ -90,6 +112,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
               ),
               calendarStyle: CalendarStyle(
+
                 todayTextStyle:
                 TextStyle(
                   fontWeight: FontWeight.bold,
@@ -115,6 +138,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                     _calendarFormat = format;
                   });
                 }
+              },
+              onPageChanged: (focusedDay) {
+                setState(() {
+                  _focusedDay = focusedDay;
+                });
               },
               selectedDayPredicate: (day) {
                 return _selectedDays.any((selectedDay) => isSameDay(selectedDay, day));
@@ -145,8 +173,9 @@ class _CalendarScreenState extends State<CalendarScreen> {
                  child: Row(
                      children: <Widget>[
                        Icon(Icons.work_history_outlined ,size: 50,),
-                       Text(':'+_selectedDays.length.toString(),
-                         style:TextStyle(fontSize : 45.0,color: Colors.black),
+                       Text(
+                         ':${_monthlyClicks["${_focusedDay.year}-${_focusedDay.month.toString().padLeft(2, '0')}"] ?? 0}',
+                         style: TextStyle(fontSize: 45.0),
                        ),
 
                      ]),

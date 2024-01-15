@@ -151,6 +151,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: (){
+
             Navigator.push(context, MaterialPageRoute(builder: (context) => Schedule()));},
         ),
         title: const Text('Pomodoro Timer'),
@@ -236,6 +237,7 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
                 ),
               ],
             ),
+
           ],
         ),
 
