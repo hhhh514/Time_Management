@@ -236,7 +236,6 @@ class _PomodoroTimerState extends State<PomodoroTimer> {
                 ),
               ],
             ),
-
           ],
         ),
 

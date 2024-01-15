@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../schedule/schedule.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -73,71 +74,89 @@ class _CalendarScreenState extends State<CalendarScreen> {
             Navigator.push(context, MaterialPageRoute(builder: (context) => Schedule()));},
         ),
 
-
       ),
-      body: TableCalendar(
-        firstDay: DateTime.utc(2000, 1, 1),
-        lastDay: DateTime.utc(2050, 12, 31),
-        availableGestures: AvailableGestures.all,
-        headerStyle: HeaderStyle(
-          formatButtonDecoration: BoxDecoration(
-            color: Colors.blueAccent,
-            borderRadius: BorderRadius.circular(25),
-        ),
-          formatButtonTextStyle: TextStyle(color: Colors.white),
+      body:  Column(
+          children: <Widget>[
+            TableCalendar(
+              firstDay: DateTime.utc(2020, 1, 1),
+              lastDay: DateTime.utc(2030, 12, 31),
+              availableGestures: AvailableGestures.all,
+              headerStyle: HeaderStyle(
+                formatButtonDecoration: BoxDecoration(
+                  color: Colors.blueAccent,
+                  borderRadius: BorderRadius.circular(25),
+                ),
+                formatButtonTextStyle: TextStyle(color: Colors.white),
 
-        ),
-        calendarStyle: CalendarStyle(
-
-          todayTextStyle:
-            TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-          todayDecoration:
-            BoxDecoration(
-            color: Colors.lightBlueAccent,
-            shape: BoxShape.circle,
-          ),
-          weekendTextStyle:
-            TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.red,
-          ),
-          outsideDaysVisible: false,
-        ),
-        focusedDay: _focusedDay,
-        calendarFormat: _calendarFormat,
-
-
-        onFormatChanged: (format) {
-          if (_calendarFormat != format) {
-            setState(() {
-              _calendarFormat = format;
-            });
-          }
-        },
-        selectedDayPredicate: (day) {
-          return _selectedDays.any((selectedDay) => isSameDay(selectedDay, day));
-        },
-        onDaySelected: _onDaySelected,
-        calendarBuilders: CalendarBuilders(
-          selectedBuilder: (context, date, _) {
-            return Container(
-              margin: const EdgeInsets.all(4.0),
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.blue,
-                shape: BoxShape.circle,
               ),
-              child: Text(
-                '${date.day}',
-                style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
+              calendarStyle: CalendarStyle(
+                todayTextStyle:
+                TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                todayDecoration:
+                BoxDecoration(
+                  color: Colors.lightBlueAccent,
+                  shape: BoxShape.circle,
+                ),
+                weekendTextStyle:
+                TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                ),
+                outsideDaysVisible: false,
               ),
-            );
-          },
-        ),
-      ),
+              focusedDay: _focusedDay,
+              calendarFormat: _calendarFormat,
+              onFormatChanged: (format) {
+                if (_calendarFormat != format) {
+                  setState(() {
+                    _calendarFormat = format;
+                  });
+                }
+              },
+              selectedDayPredicate: (day) {
+                return _selectedDays.any((selectedDay) => isSameDay(selectedDay, day));
+              },
+              onDaySelected: _onDaySelected,
+              calendarBuilders: CalendarBuilders(
+                selectedBuilder: (context, date, _) {
+                  return  Container(
+                    margin: const EdgeInsets.all(4.0),
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Colors.blue,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Text(
+                      '${date.day}',
+                      style: TextStyle(fontWeight: FontWeight.bold,color: Colors.white),
+                    ),
+                  );
+                },
+
+              ),
+
+            ),
+           Row(
+             children: <Widget>[
+               Container(
+                 child: Row(
+                     children: <Widget>[
+                       Icon(Icons.work_history_outlined ,size: 50,),
+                       Text(':'+_selectedDays.length.toString(),
+                         style:TextStyle(fontSize : 45.0,color: Colors.black),
+                       ),
+
+                     ]),
+
+                 )
+             ],
+            ),
+          ]
+      )
     );
+
   }
 }
