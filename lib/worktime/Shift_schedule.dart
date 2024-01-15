@@ -28,18 +28,23 @@ class CalendarScreen extends StatefulWidget {
 }
 
 class _CalendarScreenState extends State<CalendarScreen> {
-  Map<String, int> _monthlyClicks = {};
+
+
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
+  //某月分天數數量
+  Map<String, int> _monthlyClicks = {};
+  //天數數量
   List<DateTime> _selectedDays = [];
 
   @override
+  //重製
   void initState() {
     super.initState();
     _loadSelectedDays();
     _loadMonthlyClicks();
   }
-
+  //天數載入
   _loadSelectedDays() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> savedDates = prefs.getStringList('selectedDays') ?? [];
@@ -47,17 +52,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
       _selectedDays = savedDates.map((d) => DateTime.parse(d)).toList();
     });
   }
-
+  //天數儲存
   _saveSelectedDays() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> stringDates = _selectedDays.map((d) => d.toIso8601String()).toList();
     await prefs.setStringList('selectedDays', stringDates);
   }
-
+  //月份天數儲存
   _saveMonthlyClicks() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString('monthlyClicks', json.encode(_monthlyClicks));
   }
+  //月份天數載入
   _loadMonthlyClicks() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? monthlyClicksString = prefs.getString('monthlyClicks');
@@ -167,22 +173,49 @@ class _CalendarScreenState extends State<CalendarScreen> {
               ),
 
             ),
-           Row(
-             children: <Widget>[
+
                Container(
-                 child: Row(
+                 child: Column(
+                     mainAxisAlignment: MainAxisAlignment.start,
                      children: <Widget>[
-                       Icon(Icons.work_history_outlined ,size: 50,),
-                       Text(
-                         ':${_monthlyClicks["${_focusedDay.year}-${_focusedDay.month.toString().padLeft(2, '0')}"] ?? 0}',
-                         style: TextStyle(fontSize: 45.0),
+                      Row(
+                          children: <Widget>[
+                            Icon(Icons.work_history_outlined ,size: 50,),
+                            Text(
+                              ':${_monthlyClicks["${_focusedDay.year}-${_focusedDay.month.toString().padLeft(2, '0')}"] ?? 0}',
+                              style: TextStyle(fontSize: 45.0),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(top: 20.0),
+                              child: Text(
+                                '天/月',
+                                style: TextStyle(fontSize: 15.0,fontWeight: FontWeight.bold,),
+                              ),
+                            )
+                          ],
+                      ),
+                       Row(
+                         children: [
+                           Icon(Icons.work_history_outlined ,size: 50,),
+                           Text(
+                             ':'+_selectedDays.length.toString(),
+                             style: TextStyle(fontSize: 45.0),
+                           ),
+                           Padding(
+                             padding: EdgeInsets.only(top: 20.0),
+                             child: Text(
+                               '天/全',
+                               style: TextStyle(fontSize: 15.0,fontWeight: FontWeight.bold,),
+                             ),
+                           )
+
+                         ],
                        ),
 
                      ]),
 
                  )
-             ],
-            ),
+
           ]
       )
     );
