@@ -57,7 +57,7 @@ class _FunctionMenuState extends State<FunctionMenu>{
           Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
-              builder: (context) => CalendarScreen(),
+              builder: (context) => ShiftSchedule(),
             ),
                 (route) => false,
           )
