@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../schedule/schedule.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -106,13 +107,22 @@ class _CalendarScreenState extends State<CalendarScreen> {
       body:  Column(
           children: <Widget>[
             TableCalendar(
+              locale: 'zh_CN',
               firstDay: DateTime.utc(2020, 1, 1),
               lastDay: DateTime.utc(2030, 12, 31),
               availableGestures: AvailableGestures.all,
               headerStyle: HeaderStyle(
+                decoration: BoxDecoration(
+                  //borderRadius: BorderRadius.circular(25),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [Colors.purple, Colors.white70],
+                  ),
+                ),
                 formatButtonDecoration: BoxDecoration(
                   color: Colors.blueAccent,
-                  borderRadius: BorderRadius.circular(25),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 formatButtonTextStyle: TextStyle(color: Colors.white),
 
